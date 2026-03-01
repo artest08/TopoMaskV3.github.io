@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TopoMaskV3: Standalone Mask-Based 3D Road Topology</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1 class="hero-title">TopoMaskV3</h1>
+                <p class="hero-subtitle">Standalone Mask-Based 3D Road Topology Understanding with Disjoint and Long-Range Benchmarks</p>
+                <div class="authors">
+                    <span class="author">Muhammet Esat Kalfaoglu*</span>
+                    <span class="author">Halil Ibrahim Ozturk</span>
+                    <span class="author">Ozsel Kilinc</span>
+                    <span class="author">Alptekin Temizel</span>
+                </div>
+                <div class="affiliations">
+                    <span class="affiliation">Middle East Technical University • Togg/Trutek AI Team</span>
+                </div>
+                <div class="action-buttons">
+                    <a href="#" class="btn btn-primary" onclick="return false;" aria-disabled="true" title="arXiv link will be added after public release">
+                        arXiv (Coming Soon)
+                    </a>
+                    <a href="https://github.com/artest08/OpenLane-V2/tree/different_splits" class="btn btn-secondary" target="_blank" rel="noopener noreferrer">
+                        Benchmark Fork (Disjoint + Long-Range)
+                    </a>
+                    <a href="#citations" class="btn btn-secondary">
+                        Cite
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <section class="section" id="abstract">
+        <div class="container">
+            <h2>Abstract</h2>
+            <div class="abstract-content">
+                <p>
+                    Road topology understanding requires reasoning over directed connectivity, not only detecting map elements. Mask-based pipelines provide a complementary alternative to parametric/query-only formulations, but prior versions were limited by raster discretization artifacts and weak 3D prediction.
+                </p>
+                <p>
+                    TopoMaskV3 makes the mask pathway a <strong>standalone 3D predictor</strong> by introducing two dense heads: a <strong>dense offset field</strong> for sub-grid centerline correction and a <strong>dense height map</strong> for direct z estimation. Beyond architecture, the study introduces a stronger evaluation protocol with <strong>geographically disjoint splits</strong> to reduce overlap-driven memorization and a <strong>long-range (+/-100 m) benchmark</strong> to test robustness at extended distance.
+                </p>
+                <p>
+                    Under this rigorous setting, <strong>TopoMaskV3 (Fusion) achieves state-of-the-art results</strong> on the disjoint Near split, reaching <strong>28.5 OLSl</strong>. The findings emphasize both the effectiveness of a standalone mask-based 3D design and the necessity of benchmark protocols that measure true generalization.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" id="benchmark-integration">
+        <div class="container">
+            <h2>Disjoint and Long-Range Benchmark</h2>
+            <div class="abstract-content">
+                <p>
+                    Following the same integration style as TopoBDA's data section, TopoMaskV3 releases benchmark resources for <strong>geographically disjoint splits</strong> and <strong>long-range (+/-100 m)</strong> evaluation through the OpenLane-V2 fork.
+                </p>
+                <div style="background: #e0e7ff; padding: 1rem; border-left: 4px solid #667eea; border-radius: 5px; margin: 1.5rem 0;">
+                    <h3 style="margin-top: 0;">Resources</h3>
+                    <ul style="margin-bottom: 0;">
+                        <li><strong>Repository:</strong> <a href="https://github.com/artest08/OpenLane-V2/tree/different_splits" target="_blank" rel="noopener noreferrer">OpenLane-V2 Fork (different_splits branch)</a></li>
+                        <li><strong>Data Downloads:</strong> <a href="https://drive.google.com/drive/folders/13ISxHpA1_RrpMcyf-kXkEul-esame_pA" target="_blank" rel="noopener noreferrer">Google Drive Benchmark Folder</a></li>
+                        <li><strong>Key Packages:</strong> <code>openlanev2_sA_test_anno.zip</code>, <code>openlanev2_sA_anno_100.zip</code>, <code>openlanev2_sA_pkl_files.zip</code></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" id="highlights-research">
+        <div class="container">
+            <h2>Paper Novelties</h2>
+            <div class="highlights-research-grid">
+                <div class="highlight-item">
+                    <div class="highlight-icon">&#x1F527;</div>
+                    <h3>Standalone 3D Mask-Based Predictor</h3>
+                    <p>TopoMaskV3 extends the mask paradigm with dense offset and dense height heads, enabling robust end-to-end 3D centerline prediction from the mask path.</p>
+                </div>
+                <div class="highlight-item">
+                    <div class="highlight-icon">&#x1F30D;</div>
+                    <h3>Rigorous Generalization Benchmark</h3>
+                    <p>The study adapts geographically disjoint split methodology to road topology evaluation, reducing overlap-driven memorization and measuring true structural generalization.</p>
+                </div>
+                <div class="highlight-item">
+                    <div class="highlight-icon">&#x1F4CF;</div>
+                    <h3>Long-Range Challenge</h3>
+                    <p>Evaluation scope is extended from +/-50 m to +/-100 m, providing a stricter test of robustness for long-horizon topology reasoning and early planning decisions.</p>
+                </div>
+                <div class="highlight-item">
+                    <div class="highlight-icon">&#x1F4E1;</div>
+                    <h3>Key Insight on Fusion</h3>
+                    <p>Comprehensive analysis of output fusion (Mask vs Bezier) and sensor fusion (Camera vs LiDAR) shows both are crucial for robust long-range generalization.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" id="quick-recap">
+        <div class="container">
+            <h2>Quick Recap: Quad-Direction Label</h2>
+            <div class="abstract-content">
+                <p>
+                    TopoMaskV3 builds on the quad-direction label representation introduced in <strong>TopoMaskV2</strong>. Each centerline instance is assigned one dominant direction class (up/down/left/right), so the mask output carries an explicit flow cue before vector reconstruction.
+                </p>
+                <p>
+                    In the reconstruction stage, this label controls direction-aware extraction and ordered point generation, which reduces ambiguous trajectories in intersections and complex road layouts. TopoMaskV3 keeps this flow-aware design and couples it with dense offset and dense height predictions for stronger 3D centerline quality.
+                </p>
+            </div>
+            <div class="figure-container">
+                <div class="image-container">
+                    <img src="assets/images/quad_direction_label_recap.png" alt="Quad-direction label recap" class="research-figure recap-figure" loading="lazy">
+                </div>
+                <div class="figure-caption">
+                    <strong>Figure 1: Quad-Direction Label Encoding.</strong> A centerline is assigned one of four direction labels by majority voting over consecutive points; tie cases are resolved from the start-to-end orientation. The resulting label acts as a compact flow token for direction-aware extraction, ordering, and reconstruction.
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" id="architecture">
+        <div class="container">
+            <h2>Method Overview</h2>
+            <div class="abstract-content">
+                <p>
+                    TopoMaskV3 follows an instance-query transformer design on BEV features built from multi-camera RGB inputs. Each sparse query represents one candidate centerline instance and predicts the attributes needed for direct mask-to-3D reconstruction.
+                </p>
+            </div>
+
+            <div class="methodology-grid">
+                <div class="method-card">
+                    <h3>🏗️ Multi-View to BEV</h3>
+                    <p>Perspective-view camera features are projected into a unified BEV representation, which provides a common spatial canvas for topology prediction.</p>
+                </div>
+                <div class="method-card">
+                    <h3>🧭 Query-Level Predictions</h3>
+                    <p>For each query, the decoder predicts quad-direction class, mask probabilities, dense 2D offsets, and dense height values to encode flow and geometry jointly.</p>
+                </div>
+                <div class="method-card">
+                    <h3>📈 Direction-Aware 3D Output</h3>
+                    <p>Predicted fields are converted into refined points and then reconstructed into ordered 3D centerlines using direction-aware extraction and curve regularization.</p>
+                </div>
+            </div>
+
+            <div class="figure-container">
+                <div class="image-container">
+                    <img src="assets/images/topomaskv3_overview.png" alt="TopoMaskV3 architecture overview" class="research-figure architecture-figure" loading="lazy">
+                </div>
+                <div class="figure-caption">
+                    <strong>Figure 2: TopoMaskV3 Architecture Overview.</strong> Multi-camera images are encoded into BEV features and decoded with sparse instance queries. Each query predicts quad-direction labels, mask probabilities, dense offsets, and dense heights; a quad-direction-aware reconstruction stage then converts these dense outputs into ordered 3D centerline instances.
+                </div>
+            </div>
+
+            <div class="abstract-content">
+                <p>
+                    Figure 3 details the decoder heads and how they are used at output level. The primary path is the standalone mask-based route (classification + mask + offset + height), while the B&eacute;zier head is optional and mainly used for BDA variants or output fusion experiments.
+                </p>
+                <ul class="method-list">
+                    <li><strong>Classification head:</strong> predicts the quad-direction label used for flow definition, point ordering, and axis selection during curve fitting.</li>
+                    <li><strong>Mask head:</strong> predicts the rasterized centerline support region for extracting candidate points.</li>
+                    <li><strong>Offset head:</strong> predicts a dense 2D field for sub-grid correction of discretization artifacts.</li>
+                    <li><strong>Height head:</strong> predicts dense height values to lift refined 2D points into 3D.</li>
+                    <li><strong>B&eacute;zier head (optional):</strong> predicts 3D control points for a parametric path that can be fused with the mask-based output.</li>
+                </ul>
+            </div>
+
+            <div class="figure-container">
+                <div class="image-container">
+                    <img src="assets/images/topomaskv3_decoder.png" alt="TopoMaskV3 decoder heads" class="research-figure comparison-figure" loading="lazy">
+                </div>
+                <div class="figure-caption">
+                    <strong>Figure 3: TopoMaskV3 Decoder Heads.</strong> Each sparse query is processed by five parallel heads: classification, mask, offset, height, and optional B&eacute;zier regression. The standalone inference path uses class + mask + offset + height; when enabled, the B&eacute;zier path provides an auxiliary parametric output that can be fused with the mask-based prediction.
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" id="innovation">
+        <div class="container">
+            <h2>Key Contribution: Offset and Height Mechanisms</h2>
+            <div class="abstract-content">
+                <p>
+                    TopoMaskV3 makes the mask pathway a standalone 3D predictor by learning two dense geometric fields: a 2D offset field for sub-grid centerline correction and a height map for direct z estimation.
+                </p>
+                <p>
+                    Both mechanisms use closest-point supervision to connect raster pixels with continuous 3D centerlines, then feed a direction-aware reconstruction pipeline for smooth and ordered outputs.
+                </p>
+            </div>
+
+            <div class="figure-container">
+                <div class="image-container">
+                    <img src="assets/images/offset_refinement.png" alt="Offset and height refinement" class="research-figure offset-figure" loading="lazy">
+                </div>
+                <div class="figure-caption">
+                    <strong>Figure 4: Offset and Height Refinement Mechanism.</strong> (a-b) Standard mask extraction produces quantization artifacts because true centerlines rarely align with grid centers. (c) Multi-point proposal learns dense offsets from each foreground pixel to its closest point on the continuous centerline (one-to-many supervision). (d) Single-point proposal refines extracted centerpoints with predicted offsets (one-to-one refinement). The height head follows the same closest-point association to assign z values and lift refined points into 3D.
+                </div>
+            </div>
+
+            <div class="methodology-grid">
+                <div class="method-card">
+                    <h3>🎯 Offset Prediction</h3>
+                    <p>A dense 2D offset vector is predicted per BEV cell. This corrects discretization error from raster masks and recovers sub-grid centerline geometry before curve fitting.</p>
+                </div>
+                <div class="method-card">
+                    <h3>📏 Height Prediction</h3>
+                    <p>A dense height map predicts normalized z for the same BEV support region. Sampling height together with refined (x, y) points directly yields 3D centerline candidates.</p>
+                </div>
+                <div class="method-card">
+                    <h3>📈 Combined Effect</h3>
+                    <p>Offset and height are complementary: one improves lateral localization, the other restores vertical structure. Their combination provides the strongest gains in the ablations below.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" id="results">
+        <div class="container">
+            <h2>Experimental Results</h2>
+
+            <div class="results-container">
+                <h3>Ablation Study</h3>
+                <div class="abstract-content">
+                    <p>
+                        We first isolate the contribution of the dense offset and dense height heads. The ablation shows that both components are individually helpful and jointly strongest, confirming their complementary roles in lateral correction and 3D lifting.
+                    </p>
+                </div>
+                <h4>Offset and Height Ablation</h4>
+                <div class="table-responsive">
+                    <table class="performance-table">
+                        <thead>
+                            <tr>
+                                <th>Configuration</th>
+                                <th>DETl</th>
+                                <th>DETl_ch</th>
+                                <th>TOPll</th>
+                                <th>OLSl</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>No Prediction</td><td>31.1</td><td>31.7</td><td>22.5</td><td>36.8</td></tr>
+                            <tr><td>Only Offset</td><td>32.5</td><td>33.1</td><td>23.8</td><td>38.2</td></tr>
+                            <tr><td>Only Height</td><td>32.6</td><td>37.2</td><td>23.4</td><td>39.4</td></tr>
+                            <tr class="highlight"><td><strong>Offset + Height</strong></td><td><strong>33.1</strong></td><td><strong>37.9</strong></td><td><strong>25.0</strong></td><td><strong>40.3</strong></td></tr>
+                        </tbody>
+                    </table>
+                    <p class="table-caption">
+                        The combined setting gives the best result and improves over no prediction by <strong>+2.0 DETl</strong>, <strong>+6.2 DETl_ch</strong>, <strong>+2.5 TOPll</strong>, and <strong>+3.5 OLSl</strong>.
+                    </p>
+                </div>
+
+                <h3>Benchmark Performance</h3>
+                <div class="abstract-content">
+                    <p>
+                        Under the geographically disjoint Near split, TopoMaskV3 (Fusion) reaches state-of-the-art OLSl while also improving topology-related metrics over prior methods.
+                    </p>
+                </div>
+                <h4>SOTA on Geographically Disjoint Near Split</h4>
+                <div class="table-responsive">
+                    <table class="performance-table">
+                        <thead>
+                            <tr>
+                                <th>Method</th>
+                                <th>DETl</th>
+                                <th>DETl_ch</th>
+                                <th>TOPll</th>
+                                <th>OLSl</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>TopoNet</td><td>18.9</td><td>23.5</td><td>12.7</td><td>26.0</td></tr>
+                            <tr><td>TopoMLP</td><td>15.6</td><td>22.4</td><td>14.5</td><td>25.3</td></tr>
+                            <tr><td>TopoLogic</td><td>16.9</td><td>22.7</td><td><span class="best-value">15.5</span></td><td>26.3</td></tr>
+                            <tr><td>TopoMaskV2 (M)</td><td>16.4</td><td>20.1</td><td>10.9</td><td>23.2</td></tr>
+                            <tr><td>TopoMaskV2 (F)</td><td>18.5</td><td>23.8</td><td>11.7</td><td>25.5</td></tr>
+                            <tr><td>TopoBDA</td><td><span class="best-value">20.8</span></td><td>24.9</td><td>13.0</td><td><span class="second-best">27.3</span></td></tr>
+                            <tr><td>TopoMaskV3 (M)</td><td>19.3</td><td><span class="second-best">25.6</span></td><td>13.6</td><td><span class="second-best">27.3</span></td></tr>
+                            <tr><td>TopoMaskV3 (F)</td><td><span class="second-best">20.5</span></td><td><span class="best-value">26.2</span></td><td><span class="second-best">15.1</span></td><td><span class="best-value">28.5</span></td></tr>
+                        </tbody>
+                    </table>
+                    <p class="table-caption">
+                        Best values are in bold and second-best are underlined. TopoMaskV3 (Fusion) achieves the best OLSl (<strong>28.5</strong>) on the disjoint Near split.
+                    </p>
+                </div>
+
+                <h3>Fusion and Sensor Study</h3>
+                <div class="abstract-content">
+                    <p>
+                        We further analyze output-level fusion (Mask/Bezier/Fusion) and sensor setup (camera-only vs camera+LiDAR) across split conditions and range settings (+/-50 m and +/-100 m).
+                    </p>
+                </div>
+                <h4>Camera vs Camera+LiDAR Across Range and Split</h4>
+                <div class="table-responsive fusion-table-wrap">
+                    <table class="performance-table fusion-table">
+                        <thead>
+                            <tr class="split-band-row">
+                                <th rowspan="3" class="stub-head">Output</th>
+                                <th colspan="4" class="split-head split-original">Original Split (Overlap)</th>
+                                <th colspan="4" class="split-head split-near">Near Split (Disjoint)</th>
+                            </tr>
+                            <tr class="sensor-band-row">
+                                <th colspan="2" class="sensor-camera">Camera</th>
+                                <th colspan="2" class="sensor-lidar">Camera + LiDAR</th>
+                                <th colspan="2" class="sensor-camera">Camera</th>
+                                <th colspan="2" class="sensor-lidar">Camera + LiDAR</th>
+                            </tr>
+                            <tr class="range-band-row">
+                                <th>&plusmn;50 m</th>
+                                <th>&plusmn;100 m</th>
+                                <th>&plusmn;50 m</th>
+                                <th>&plusmn;100 m</th>
+                                <th>&plusmn;50 m</th>
+                                <th>&plusmn;100 m</th>
+                                <th>&plusmn;50 m</th>
+                                <th>&plusmn;100 m</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Bezier</td>
+                                <td><span class="best-value">43.5</span></td>
+                                <td><span class="second-best">32.5</span></td>
+                                <td><span class="best-value">51.6</span></td>
+                                <td><span class="best-value">50.0</span></td>
+                                <td><span class="second-best">27.8</span></td>
+                                <td>16.5</td>
+                                <td><span class="best-value">32.0</span></td>
+                                <td><span class="second-best">24.2</span></td>
+                            </tr>
+                            <tr>
+                                <td>Mask</td>
+                                <td>40.8</td>
+                                <td>31.0</td>
+                                <td>47.7</td>
+                                <td>46.9</td>
+                                <td>26.4</td>
+                                <td><span class="second-best">16.7</span></td>
+                                <td><span class="second-best">31.0</span></td>
+                                <td>23.7</td>
+                            </tr>
+                            <tr>
+                                <td>Fusion</td>
+                                <td><span class="second-best">42.5</span></td>
+                                <td><span class="best-value">32.9</span></td>
+                                <td><span class="second-best">50.0</span></td>
+                                <td><span class="second-best">48.6</span></td>
+                                <td><span class="best-value">27.9</span></td>
+                                <td><span class="best-value">17.4</span></td>
+                                <td><span class="best-value">32.0</span></td>
+                                <td><span class="best-value">24.5</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p class="table-caption">
+                        Best values are in bold and second-best are underlined. Fusion and camera+LiDAR generally provide the most stable performance, especially under extended range and disjoint evaluation.
+                    </p>
+                    <div class="results-keypoints">
+                        <h5>Key Findings from This Analysis</h5>
+                        <ul>
+                            <li><strong>Memorization effect:</strong> Moving from Original (overlap) to Near (disjoint) produces large drops across outputs, indicating overlap-driven inflation in the original split (e.g., B&eacute;zier, camera, &plusmn;100 m: 32.5 &rarr; 16.5).</li>
+                            <li><strong>Fusion vs B&eacute;zier across split types:</strong> In disjoint conditions (Near), Fusion is consistently stronger than B&eacute;zier across all four sensor-range settings, while in the overlap-heavy Original split B&eacute;zier leads in three of four settings. This pattern indicates stronger memorization sensitivity in the B&eacute;zier output type.</li>
+                            <li><strong>Mask vs B&eacute;zier robustness (Original &rarr; Near):</strong> Mask shows consistently smaller reductions across all settings. Camera &plusmn;50 m: B&eacute;zier <strong>-36.1%</strong> vs Mask <strong>-35.3%</strong>; Camera &plusmn;100 m: <strong>-49.2%</strong> vs <strong>-46.1%</strong>; Camera+LiDAR &plusmn;50 m: <strong>-38.0%</strong> vs <strong>-35.0%</strong>; Camera+LiDAR &plusmn;100 m: <strong>-51.6%</strong> vs <strong>-49.5%</strong>.</li>
+                            <li><strong>LiDAR overlap sensitivity (Fusion):</strong> LiDAR gains are larger on the overlap-heavy Original split than on the disjoint Near split: <strong>+47.7% vs +40.8%</strong> at &plusmn;100 m, and <strong>+17.6% vs +14.7%</strong> at &plusmn;50 m. This indicates LiDAR-equipped models also benefit from overlap-driven memorization and therefore show an overfitting tendency on the Original split.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" id="conclusion">
+        <div class="container">
+            <h2>Conclusion</h2>
+            <div class="conclusion-content">
+                <p>
+                    TopoMaskV3 matures the mask-based road-topology paradigm into a practical standalone 3D predictor by introducing dense offset and dense height prediction heads for sub-grid localization and direct elevation estimation.
+                </p>
+                <ul class="conclusion-list">
+                    <li><strong>State-of-the-art under strict evaluation:</strong> On the geographically disjoint Near split, TopoMaskV3 (Fusion) reaches <strong>28.5 OLS<sub>l</sub></strong>, while the standalone mask-only variant reaches <strong>27.3 OLS<sub>l</sub></strong>.</li>
+                    <li><strong>Benchmark contribution:</strong> The proposed geographically distinct splits and long-range benchmark provide a stricter and more realistic testbed by reducing overlap-driven score inflation.</li>
+                    <li><strong>Generalization insight:</strong> Mask and Fusion are more stable across disjoint conditions, whereas B&eacute;zier shows stronger dependence on overlap-heavy settings, consistent with output-type memorization behavior.</li>
+                    <li><strong>Sensor-fusion insight:</strong> LiDAR is especially valuable at long range, but larger relative gains on the overlap-heavy Original split indicate that LiDAR-equipped models can also benefit from memorization.</li>
+                    <li><strong>Current limitation and direction:</strong> TopoMaskV3 still uses a post-processing stage (not fully end-to-end), but introduces a representation that is fundamentally complementary to parametric curve-based formulations.</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" id="citations">
+        <div class="container">
+            <h2>Citations</h2>
+            <div class="citation-box">
+                <pre>@article{kalfaoglu_topomaskv2_2024,
+  title={TopoMaskV2: Enhanced Instance-Mask-Based Formulation for the Road Topology Problem},
+  journal={arXiv preprint arXiv:2409.11325},
+  author={Kalfaoglu, Muhammet Esat and Ozturk, Halil Ibrahim and Kilinc, Ozsel and Temizel, Alptekin},
+  year={2024}
+}</pre>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <p>TopoMaskV3 project page.</p>
+            <p>Contact and final metadata will be published with the paper release.</p>
+        </div>
+    </footer>
+
+    <div id="imageModal" class="image-modal">
+        <span class="close">&times;</span>
+        <img id="modalImage" src="" alt="">
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
