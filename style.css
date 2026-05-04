@@ -61,6 +61,12 @@ body {
     letter-spacing: 0.2px;
 }
 
+.acceptance-badge a {
+    color: #ffffff;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
 .authors {
     margin-bottom: 1em;
     font-size: 1.1em;
