@@ -78,9 +78,26 @@ body {
 }
 
 .affiliations {
-    margin-bottom: 2em;
+    margin-bottom: 0.6em;
     font-size: 1em;
     opacity: 0.9;
+}
+
+.contact-emails {
+    margin-bottom: 2em;
+    font-size: 0.95em;
+    opacity: 0.95;
+}
+
+.contact-emails a {
+    color: #ffffff;
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+.email-separator {
+    margin: 0 8px;
 }
 
 .action-buttons {
@@ -557,6 +574,15 @@ body {
     .author {
         display: block;
         margin: 5px 0;
+    }
+
+    .contact-emails a {
+        display: block;
+        margin-top: 4px;
+    }
+
+    .email-separator {
+        display: none;
     }
     
     .innovation-grid {
