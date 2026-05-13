@@ -345,6 +345,14 @@ body {
     border: 1px solid rgba(31, 77, 115, 0.16);
 }
 
+.split-protocol-wrap {
+    border: 1px solid rgba(31, 77, 115, 0.16);
+}
+
+.split-generalization-wrap {
+    border: 1px solid rgba(31, 77, 115, 0.16);
+}
+
 .performance-table {
     width: 100%;
     border-collapse: collapse;
@@ -397,6 +405,49 @@ body {
     font-weight: 700;
 }
 
+.split-protocol-table th {
+    background: #1f4d73;
+}
+
+.split-protocol-table td:first-child {
+    font-weight: 700;
+    color: #274059;
+}
+
+.split-generalization-table th {
+    background: #245f94;
+}
+
+.split-generalization-table th span {
+    display: inline-block;
+    margin-top: 3px;
+    color: rgba(255, 255, 255, 0.78);
+    font-size: 0.78em;
+    font-weight: 500;
+}
+
+.split-generalization-table td:first-child {
+    font-weight: 700;
+    color: #274059;
+}
+
+.drop-value {
+    display: block;
+    margin-top: 3px;
+    color: #7a8b3a;
+    font-size: 0.82em;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.drop-total {
+    font-weight: 700;
+}
+
+.drop-high {
+    color: #c94a3a;
+}
+
 .performance-table td {
     padding: 12px 10px;
     text-align: center;
@@ -411,6 +462,10 @@ body {
     text-decoration: underline;
     text-underline-offset: 2px;
     text-decoration-thickness: 1.5px;
+}
+
+.regular-weight {
+    font-weight: 400;
 }
 
 .performance-table tr:hover {

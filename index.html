@@ -299,10 +299,104 @@
                 <h3>Fusion and Sensor Study</h3>
                 <div class="abstract-content">
                     <p>
-                        We further analyze output-level fusion (Mask/Bezier/Fusion) and sensor setup (camera-only vs camera+LiDAR) across split conditions and range settings (+/-50 m and +/-100 m).
+                        We first analyze output-level generalization (Mask/Bezier/Fusion) across the Original, Near, FarA, FarB, and FarC splits at +/-50 m, then study sensor setup (camera-only vs camera+LiDAR) under +/-50 m and +/-100 m range settings.
                     </p>
                 </div>
-                <h4>Camera vs Camera+LiDAR Across Range and Split</h4>
+                <h4>Evaluation Split Protocols</h4>
+                <div class="table-responsive split-protocol-wrap">
+                    <table class="performance-table split-protocol-table">
+                        <thead>
+                            <tr>
+                                <th>Dataset Split</th>
+                                <th>Geo. Overlap</th>
+                                <th>Shared Cities</th>
+                                <th>Evaluation Focus</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Original</td>
+                                <td>Yes</td>
+                                <td>Yes</td>
+                                <td>In-distribution performance</td>
+                            </tr>
+                            <tr>
+                                <td>Near</td>
+                                <td>No</td>
+                                <td>Yes</td>
+                                <td>Within-city generalization</td>
+                            </tr>
+                            <tr>
+                                <td>FarA / FarB / FarC</td>
+                                <td>No</td>
+                                <td>No</td>
+                                <td>Robust geographic generalization</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p class="table-caption">
+                        The Original split preserves geographic overlap between training and evaluation samples. Near removes location overlap while keeping shared cities, and FarA/FarB/FarC remove both location and city overlap.
+                    </p>
+                </div>
+
+                <h4>Split-Wise Generalization at &plusmn;50 m</h4>
+                <div class="table-responsive split-generalization-wrap">
+                    <table class="performance-table split-generalization-table">
+                        <thead>
+                            <tr>
+                                <th>Output</th>
+                                <th>Original<br><span>Overlap</span></th>
+                                <th>Near<br><span>Disjoint</span></th>
+                                <th>FarA<br><span>Disjoint</span></th>
+                                <th>FarB<br><span>Disjoint</span></th>
+                                <th>FarC<br><span>Disjoint</span></th>
+                                <th>Avg. Drop<br><span>Disjoint</span></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>B&eacute;zier</td>
+                                <td><span class="best-value">43.4</span></td>
+                                <td><span class="second-best">27.8</span><small class="drop-value drop-high">(&minus;35.9%)</small></td>
+                                <td><span class="second-best">22.2</span><small class="drop-value drop-high">(&minus;48.8%)</small></td>
+                                <td><span class="best-value">20.9</span><small class="drop-value drop-high">(&minus;51.8%)</small></td>
+                                <td><span class="second-best">27.8</span><small class="drop-value drop-high">(&minus;35.9%)</small></td>
+                                <td><span class="drop-total drop-high">&minus;43.1%</span></td>
+                            </tr>
+                            <tr>
+                                <td>Mask</td>
+                                <td>40.8</td>
+                                <td>26.4<small class="drop-value">(&minus;35.3%)</small></td>
+                                <td>21.2<small class="drop-value">(&minus;48.0%)</small></td>
+                                <td>20.0<small class="drop-value">(&minus;51.0%)</small></td>
+                                <td>27.1<small class="drop-value">(&minus;33.6%)</small></td>
+                                <td><span class="second-best">&minus;42.0%</span></td>
+                            </tr>
+                            <tr class="highlight">
+                                <td><strong>Fusion</strong></td>
+                                <td><span class="second-best">42.5</span></td>
+                                <td><span class="best-value">27.9</span><small class="drop-value">(&minus;34.4%)</small></td>
+                                <td><span class="best-value">22.3</span><small class="drop-value">(&minus;47.5%)</small></td>
+                                <td><span class="second-best regular-weight">20.7</span><small class="drop-value">(&minus;51.3%)</small></td>
+                                <td><span class="best-value">28.3</span><small class="drop-value">(&minus;33.4%)</small></td>
+                                <td><span class="best-value">&minus;41.6%</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p class="table-caption">
+                        Values are OLS<sub>l</sub> in the standard camera-only &plusmn;50 m setting; percentages show relative drops from the Original split. Best values per split are in bold and second-best are underlined; for Avg. Drop, less negative is better. The largest drop per disjoint split is highlighted in red.
+                    </p>
+                    <div class="results-keypoints">
+                        <h5>Split-Wise Generalization Findings</h5>
+                        <ul>
+                            <li><strong>Original split inflation:</strong> Across Near, FarA, FarB, and FarC, average OLS<sub>l</sub> reductions are <strong>&minus;43.1%</strong> for B&eacute;zier, <strong>&minus;42.0%</strong> for Mask, and <strong>&minus;41.6%</strong> for Fusion.</li>
+                            <li><strong>Fusion under geographic shift:</strong> Fusion is best on Near, FarA, and FarC, while FarB is nearly tied with B&eacute;zier (20.7 vs <strong>20.9</strong> OLS<sub>l</sub>).</li>
+                            <li><strong>Mask robustness:</strong> Mask does not always reach the highest absolute score, but its smaller degradation compared with B&eacute;zier supports the paper's conclusion that mask-based representations are less sensitive to geographic memorization.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <h4>Long-Range Camera vs Camera+LiDAR Study</h4>
                 <div class="table-responsive fusion-table-wrap">
                     <table class="performance-table fusion-table">
                         <thead>
@@ -377,6 +471,7 @@
                         </ul>
                     </div>
                 </div>
+
             </div>
         </div>
     </section>
@@ -391,7 +486,8 @@
                 <ul class="conclusion-list">
                     <li><strong>State-of-the-art under strict evaluation:</strong> On the geographically disjoint Near split, TopoMaskV3 (Fusion) reaches <strong>28.5 OLS<sub>l</sub></strong>, while the standalone mask-only variant reaches <strong>27.3 OLS<sub>l</sub></strong>.</li>
                     <li><strong>Benchmark contribution:</strong> The proposed geographically distinct splits and long-range benchmark provide a stricter and more realistic testbed by reducing overlap-driven score inflation.</li>
-                    <li><strong>Generalization insight:</strong> Mask and Fusion are more stable across disjoint conditions, whereas B&eacute;zier shows stronger dependence on overlap-heavy settings, consistent with output-type memorization behavior.</li>
+                    <li><strong>Split-wise generalization insight:</strong> In the camera-only &plusmn;50 m setting, moving from Original to the disjoint Near/FarA/FarB/FarC splits causes average OLS<sub>l</sub> drops of <strong>&minus;43.1%</strong> for B&eacute;zier, <strong>&minus;42.0%</strong> for Mask, and <strong>&minus;41.6%</strong> for Fusion. Fusion leads in three of the four disjoint splits, reinforcing the poster and paper conclusion that mask-based fusion is more stable under geographic shift.</li>
+                    <li><strong>Output-type insight:</strong> Mask and Fusion are more stable across disjoint conditions, whereas B&eacute;zier shows stronger dependence on overlap-heavy settings, consistent with output-type memorization behavior.</li>
                     <li><strong>Sensor-fusion insight:</strong> LiDAR is especially valuable at long range, but larger relative gains on the overlap-heavy Original split indicate that LiDAR-equipped models can also benefit from memorization.</li>
                     <li><strong>Current limitation and direction:</strong> TopoMaskV3 still uses a post-processing stage (not fully end-to-end), but introduces a representation that is fundamentally complementary to parametric curve-based formulations.</li>
                 </ul>
